@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 import {embed, embedList} from "./discordUtil";
 import fetch from "node-fetch"
+import {rateLimited} from "./discordBot";
 
 export async function startDiscordDMBot(discord: DiscordClient, memberGuild: Guild) {
     if (process.env.DISCORD_ROLE === undefined) {
@@ -14,7 +15,7 @@ export async function startDiscordDMBot(discord: DiscordClient, memberGuild: Gui
     }
     const role = process.env.DISCORD_ROLE
     discord.on('message', async msg => {
-        if (msg.channel.type == 'dm' && discord.user != null && msg.author.id != discord.user.id) {
+        if (!rateLimited && msg.channel.type == 'dm' && discord.user != null && msg.author.id != discord.user.id) {
             const channel: DMChannel = msg.channel as DMChannel
             let member: GuildMember | null;
             try {
